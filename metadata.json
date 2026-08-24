@@ -1,0 +1,8 @@
+{
+  "name": "Remix MPARA – Order \u0026 Financial Management System",
+  "description": "نظام احترافي لإدارة الطلبات والمبيعات والشحن والتحصيلات والمرتجعات والحسابات المالية لشركة MPARA SARL",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
