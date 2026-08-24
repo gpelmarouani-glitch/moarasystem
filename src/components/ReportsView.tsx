@@ -12,6 +12,9 @@ import {
   Building2,
   Truck,
   Percent,
+  Layers,
+  FileCheck2,
+  Sparkles,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import {
@@ -24,10 +27,16 @@ import {
   exportOrdersToExcel,
   exportOrdersToPDF,
   printFinancialReport,
+  exportComprehensiveWorkbook,
+  exportCollectionsToExcel,
+  exportReturnsToExcel,
+  exportProductsToExcel,
+  exportAccountsToExcel,
+  exportCarriersToExcel,
 } from '../utils/exportImport';
 
 export const ReportsView: React.FC = () => {
-  const { orders, accounts, deliveryCompanies, settings, t } = useApp();
+  const { orders, accounts, deliveryCompanies, products, settings, t } = useApp();
 
   const [dateRange, setDateRange] = useState<'all' | 'today' | 'week' | 'month'>('all');
 
@@ -58,6 +67,10 @@ export const ReportsView: React.FC = () => {
   const accountStats = accounts.map((acc) => calculateAccountStats(filteredOrders, acc.name));
   const carrierStats = deliveryCompanies.map((comp) => calculateDeliveryCompanyStats(filteredOrders, comp.name));
 
+  const handleExportMasterWorkbook = () => {
+    exportComprehensiveWorkbook(filteredOrders, accounts, deliveryCompanies, products, summary);
+  };
+
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* Header */}
@@ -68,7 +81,7 @@ export const ReportsView: React.FC = () => {
             <span>التقارير المالية والقوائم الحسابية الرسمية</span>
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            كشوفات الحسابات، الأرباح، التكاليف، وتقارير أداء الشركات لشركة MPARA SARL
+            كشوفات الحسابات، الأرباح، التكاليف، وملفات Excel المتقدمة لشركة MPARA SARL
           </p>
         </div>
 
@@ -101,12 +114,23 @@ export const ReportsView: React.FC = () => {
             </button>
           </div>
 
+          {/* Master 7-Sheets Workbook Export */}
+          <button
+            onClick={handleExportMasterWorkbook}
+            id="btn-export-master-excel"
+            className="flex items-center gap-1.5 text-xs font-black bg-emerald-700 hover:bg-emerald-800 text-white px-3.5 py-2 rounded-xl shadow-xs transition-all cursor-pointer"
+            title="تصدير مصنف إكسيل تنفيذي شامل يضم 7 صفحات مدمجة"
+          >
+            <Layers className="w-4 h-4" />
+            <span>مصنف Excel الشامل (7 صفحات)</span>
+          </button>
+
           <button
             onClick={() => exportOrdersToExcel(filteredOrders)}
             className="flex items-center gap-1 text-xs font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-2 rounded-xl transition-colors cursor-pointer"
           >
             <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-            <span>Excel</span>
+            <span>Excel الطلبات</span>
           </button>
 
           <button
@@ -119,10 +143,81 @@ export const ReportsView: React.FC = () => {
 
           <button
             onClick={() => printFinancialReport(summary, filteredOrders)}
-            className="flex items-center gap-1 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl shadow-xs transition-colors cursor-pointer"
+            className="flex items-center gap-1 text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-xl shadow-xs transition-colors cursor-pointer"
           >
             <Printer className="w-4 h-4" />
-            <span>طباعة التقرير الشامل</span>
+            <span>طباعة</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Specialized Excel Exports Hub */}
+      <div className="bg-emerald-50/50 border border-emerald-200/80 rounded-2xl p-4 sm:p-5 space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-emerald-600" />
+            <h3 className="font-extrabold text-xs sm:text-sm text-emerald-950">
+              تصدير تقارير الإكسيل المخصصة (.xlsx) بضغطة واحدة
+            </h3>
+          </div>
+          <span className="text-[11px] text-emerald-700 font-bold bg-white px-2.5 py-1 rounded-lg border border-emerald-200 shadow-2xs">
+            متوافق 100% مع Microsoft Excel
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+          <button
+            onClick={() => exportOrdersToExcel(filteredOrders, 'MPARA_Orders_Report.xlsx')}
+            className="flex flex-col items-center justify-center text-center p-3 bg-white hover:bg-emerald-50/60 border border-slate-200 hover:border-emerald-300 rounded-xl transition-all cursor-pointer group shadow-2xs"
+          >
+            <FileSpreadsheet className="w-5 h-5 text-emerald-600 mb-1.5 group-hover:scale-110 transition-transform" />
+            <span className="font-bold text-xs text-slate-800">سجل الطلبات</span>
+            <span className="text-[10px] text-slate-500">All Orders</span>
+          </button>
+
+          <button
+            onClick={() => exportCollectionsToExcel(filteredOrders)}
+            className="flex flex-col items-center justify-center text-center p-3 bg-white hover:bg-emerald-50/60 border border-slate-200 hover:border-emerald-300 rounded-xl transition-all cursor-pointer group shadow-2xs"
+          >
+            <BadgeDollarSign className="w-5 h-5 text-emerald-600 mb-1.5 group-hover:scale-110 transition-transform" />
+            <span className="font-bold text-xs text-slate-800">التحصيلات COD</span>
+            <span className="text-[10px] text-slate-500">Collections</span>
+          </button>
+
+          <button
+            onClick={() => exportReturnsToExcel(filteredOrders)}
+            className="flex flex-col items-center justify-center text-center p-3 bg-white hover:bg-emerald-50/60 border border-slate-200 hover:border-emerald-300 rounded-xl transition-all cursor-pointer group shadow-2xs"
+          >
+            <RotateCcw className="w-5 h-5 text-rose-600 mb-1.5 group-hover:scale-110 transition-transform" />
+            <span className="font-bold text-xs text-slate-800">المرتجعات</span>
+            <span className="text-[10px] text-slate-500">Returns</span>
+          </button>
+
+          <button
+            onClick={() => exportProductsToExcel(products, filteredOrders)}
+            className="flex flex-col items-center justify-center text-center p-3 bg-white hover:bg-emerald-50/60 border border-slate-200 hover:border-emerald-300 rounded-xl transition-all cursor-pointer group shadow-2xs"
+          >
+            <FileCheck2 className="w-5 h-5 text-indigo-600 mb-1.5 group-hover:scale-110 transition-transform" />
+            <span className="font-bold text-xs text-slate-800">المخزون والمنتجات</span>
+            <span className="text-[10px] text-slate-500">Inventory</span>
+          </button>
+
+          <button
+            onClick={() => exportAccountsToExcel(accounts, filteredOrders)}
+            className="flex flex-col items-center justify-center text-center p-3 bg-white hover:bg-emerald-50/60 border border-slate-200 hover:border-emerald-300 rounded-xl transition-all cursor-pointer group shadow-2xs"
+          >
+            <Building2 className="w-5 h-5 text-blue-600 mb-1.5 group-hover:scale-110 transition-transform" />
+            <span className="font-bold text-xs text-slate-800">حسابات الإرسال</span>
+            <span className="text-[10px] text-slate-500">Store Accounts</span>
+          </button>
+
+          <button
+            onClick={() => exportCarriersToExcel(deliveryCompanies, filteredOrders)}
+            className="flex flex-col items-center justify-center text-center p-3 bg-white hover:bg-emerald-50/60 border border-slate-200 hover:border-emerald-300 rounded-xl transition-all cursor-pointer group shadow-2xs"
+          >
+            <Truck className="w-5 h-5 text-amber-600 mb-1.5 group-hover:scale-110 transition-transform" />
+            <span className="font-bold text-xs text-slate-800">شركات التوصيل</span>
+            <span className="text-[10px] text-slate-500">Carriers</span>
           </button>
         </div>
       </div>

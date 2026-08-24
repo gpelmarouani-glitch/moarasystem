@@ -20,6 +20,8 @@ import {
   Building2,
   DollarSign,
   AlertTriangle,
+  UploadCloud,
+  FileDown,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { Order, DeliveryStatus, CollectionStatus, ReturnStatus } from '../types';
@@ -34,7 +36,9 @@ import {
   exportOrdersToCSV,
   exportOrdersToPDF,
   printOrderInvoice,
+  downloadOrdersImportTemplate,
 } from '../utils/exportImport';
+import { ExcelImportModal } from './ExcelImportModal';
 
 export const OrdersList: React.FC = () => {
   const {
@@ -57,6 +61,7 @@ export const OrdersList: React.FC = () => {
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   // Toggle selection
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,14 +105,37 @@ export const OrdersList: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {/* Export Dropdown / Buttons */}
+          {/* Excel Import Button */}
+          <button
+            onClick={() => setIsImportModalOpen(true)}
+            id="btn-import-excel"
+            className="flex items-center gap-1.5 text-xs font-bold bg-emerald-700 hover:bg-emerald-800 text-white px-3.5 py-2 rounded-xl shadow-xs transition-colors cursor-pointer"
+            title="استيراد طلبات متعددة من ملف إكسيل (.xlsx أو .csv)"
+          >
+            <UploadCloud className="w-4 h-4" />
+            <span>استيراد Excel</span>
+          </button>
+
+          {/* Download Official Template */}
+          <button
+            onClick={downloadOrdersImportTemplate}
+            id="btn-download-template"
+            className="flex items-center gap-1.5 text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-2 rounded-xl transition-colors cursor-pointer"
+            title="تحميل قالب إكسيل جاهز للملء"
+          >
+            <FileDown className="w-4 h-4 text-emerald-600" />
+            <span>قالب Excel</span>
+          </button>
+
+          {/* Export to Excel */}
           <button
             onClick={() => exportOrdersToExcel(filteredOrders)}
+            id="btn-export-excel"
             className="flex items-center gap-1.5 text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-2 rounded-xl transition-colors cursor-pointer"
-            title="تصدير إلى ملف Excel"
+            title="تصدير النتائج إلى ملف Excel (.xlsx)"
           >
             <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-            <span>Excel</span>
+            <span>تصدير Excel</span>
           </button>
 
           <button
@@ -540,6 +568,12 @@ export const OrdersList: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Excel Import Modal */}
+      <ExcelImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+      />
     </div>
   );
 };

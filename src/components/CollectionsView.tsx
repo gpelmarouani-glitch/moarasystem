@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { calculateOrderGrandTotal, formatMAD } from '../utils/calculations';
-import { exportOrdersToExcel } from '../utils/exportImport';
+import { exportCollectionsToExcel } from '../utils/exportImport';
 
 export const CollectionsView: React.FC = () => {
   const {
@@ -82,11 +82,11 @@ export const CollectionsView: React.FC = () => {
         </div>
 
         <button
-          onClick={() => exportOrdersToExcel(orders.filter((o) => o.collectionStatus === 'غير محصل'))}
+          onClick={() => exportCollectionsToExcel(uncollectedDeliveredOrders, 'MPARA_Uncollected_COD.xlsx')}
           className="flex items-center gap-1.5 text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3.5 py-2 rounded-xl transition-colors cursor-pointer"
         >
           <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-          <span>تصدير كشف المستحقات غير المحصلة</span>
+          <span>تصدير كشف المستحقات غير المحصلة (Excel)</span>
         </button>
       </div>
 

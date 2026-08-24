@@ -9,10 +9,13 @@ import {
   AlertTriangle,
   Boxes,
   Percent,
+  FileSpreadsheet,
+  FileDown,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { Product } from '../types';
 import { formatMAD } from '../utils/calculations';
+import { exportProductsToExcel, downloadProductsImportTemplate } from '../utils/exportImport';
 
 export const ProductsView: React.FC = () => {
   const { products, orders, addProduct, updateProduct, deleteProduct, t } = useApp();
@@ -122,13 +125,33 @@ export const ProductsView: React.FC = () => {
           </p>
         </div>
 
-        <button
-          onClick={openAddModal}
-          className="flex items-center gap-1.5 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl shadow-xs transition-colors cursor-pointer"
-        >
-          <PlusCircle className="w-4 h-4" />
-          <span>إضافة منتج جديد</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => exportProductsToExcel(products, orders)}
+            className="flex items-center gap-1.5 text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3.5 py-2 rounded-xl transition-colors cursor-pointer"
+            title="تصدير المخزون والمنتجات إلى Excel"
+          >
+            <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+            <span>تصدير Excel</span>
+          </button>
+
+          <button
+            onClick={downloadProductsImportTemplate}
+            className="flex items-center gap-1.5 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-xl transition-colors cursor-pointer"
+            title="تحميل نموذج منتجات جاهز"
+          >
+            <FileDown className="w-4 h-4 text-slate-600" />
+            <span>قالب Excel</span>
+          </button>
+
+          <button
+            onClick={openAddModal}
+            className="flex items-center gap-1.5 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl shadow-xs transition-colors cursor-pointer"
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span>إضافة منتج جديد</span>
+          </button>
+        </div>
       </div>
 
       {/* Products Table */}
